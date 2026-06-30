@@ -1,0 +1,25 @@
+apiVersion: v1
+entries:
+  ryot:
+  - apiVersion: v2
+    appVersion: v10
+    created: "2026-06-30T22:57:19.936096695Z"
+    description: The only self hosted tracker you will ever need - track movies, shows,
+      video games, books, and more.
+    digest: 48c224c6b86598b020a4a05608461bc567dc5a524f714cb45acc2c66bc6e5a66
+    home: https://ryot.io
+    keywords:
+    - ryot
+    - tracker
+    - self-hosted
+    - media
+    maintainers:
+    - name: Nigel
+    name: ryot
+    sources:
+    - https://github.com/IgnisDa/ryot
+    type: application
+    urls:
+    - https://github.com/NigelVanHattum/ryot/releases/download/ryot-10.3.1/ryot-10.3.1.tgz
+    version: 10.3.1
+generated: "2026-06-30T22:57:19.936109078Z"
