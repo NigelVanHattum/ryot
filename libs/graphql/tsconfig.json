@@ -1,0 +1,20 @@
+{
+	"extends": "../../tsconfig.options.json",
+	"references": [
+		{
+			"path": "../generated"
+		}
+	],
+	"compilerOptions": {
+		"strict": true,
+		"noEmit": true,
+		"outDir": "dist",
+		"module": "esnext",
+		"lib": ["ESNext", "DOM"],
+		"preserveConstEnums": true,
+		"moduleResolution": "node",
+		"paths": {
+			"@ryot/generated/*": ["../generated/src/*"]
+		}
+	}
+}

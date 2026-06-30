@@ -1,0 +1,266 @@
+import { cn } from "@ryot/ts-utils";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import {
+	isRouteErrorResponse,
+	Link,
+	Links,
+	type LinksFunction,
+	Meta,
+	type MetaFunction,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
+	useLocation,
+	useRouteError,
+} from "react-router";
+import { $path } from "safe-routes";
+import { withFragment } from "ufo";
+import { Button } from "./lib/components/ui/button";
+import { Toaster } from "./lib/components/ui/sonner";
+import { logoUrl, queryClient, startUrl, useConfigData } from "./lib/general";
+import "./tailwind.css";
+
+function HeaderActions() {
+	const { data: configData } = useConfigData();
+
+	return (
+		<div className="flex items-center space-x-4">
+			{configData?.isLoggedIn ? (
+				<Link to={$path("/me")}>
+					<Button variant="ghost" size="sm">
+						Dashboard
+					</Button>
+				</Link>
+			) : (
+				<Link to={startUrl}>
+					<Button size="sm">Get Started</Button>
+				</Link>
+			)}
+		</div>
+	);
+}
+
+export const meta: MetaFunction = () => {
+	return [
+		{ title: "Ryot - The Only Self-Hosted Tracker You Will Ever Need" },
+		{
+			name: "description",
+			content:
+				"Self-hosted platform for tracking your media, fitness, and personal data. Complete privacy and control over your digital life.",
+		},
+	];
+};
+
+export const links: LinksFunction = () => {
+	return [
+		{
+			rel: "stylesheet",
+			href: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap",
+		},
+		{
+			rel: "icon",
+			sizes: "16x16",
+			type: "image/png",
+			href: "https://raw.githubusercontent.com/IgnisDa/ryot/main/libs/assets/favicon-16x16.png",
+		},
+		{
+			rel: "icon",
+			sizes: "32x32",
+			type: "image/png",
+			href: "https://raw.githubusercontent.com/IgnisDa/ryot/main/libs/assets/favicon-32x32.png",
+		},
+	];
+};
+
+export default function App() {
+	const location = useLocation();
+
+	const isActivePage = (path: string) => {
+		if (path === "/") return location.pathname === "/" && location.hash === "";
+		return location.pathname.startsWith(path);
+	};
+
+	const isActiveFragment = (fragment: string) => {
+		if (location.pathname !== "/") return false;
+		return location.hash === `#${fragment}`;
+	};
+
+	return (
+		<html lang="en" className="scroll-smooth">
+			<head>
+				<meta charSet="utf-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<Meta />
+				<Links />
+				<script
+					defer
+					data-domains="ryot.io,www.ryot.io"
+					src="https://umami.diptesh.me/script.js"
+					data-website-id="65cf9bb3-381b-4ea4-b87d-b40a23a0204f"
+				/>
+			</head>
+			<QueryClientProvider client={queryClient}>
+				<body className="font-body">
+					<Toaster />
+					<div className="flex flex-col min-h-dvh">
+						<header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+							<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+								<div className="flex items-center justify-between h-16">
+									<div className="flex items-center space-x-3">
+										<Link
+											to={$path("/")}
+											className="flex items-center space-x-3"
+										>
+											<img
+												alt="Ryot"
+												src={logoUrl}
+												className="w-8 h-8 object-contain"
+											/>
+											<span className="text-xl font-semibold text-foreground">
+												Ryot
+											</span>
+										</Link>
+									</div>
+
+									<nav className="hidden md:flex items-center space-x-8">
+										<Link
+											to={$path("/")}
+											className={cn(
+												"transition-colors",
+												isActivePage("/")
+													? "text-primary font-medium"
+													: "text-muted-foreground hover:text-foreground",
+											)}
+										>
+											Home
+										</Link>
+										<Link
+											to={$path("/features")}
+											className={cn(
+												"transition-colors",
+												isActivePage("/features")
+													? "text-primary font-medium"
+													: "text-muted-foreground hover:text-foreground",
+											)}
+										>
+											Features
+										</Link>
+										<Link
+											to={withFragment($path("/"), "pricing")}
+											className={cn(
+												"transition-colors",
+												isActiveFragment("pricing")
+													? "text-primary font-medium"
+													: "text-muted-foreground hover:text-foreground",
+											)}
+										>
+											Pricing
+										</Link>
+										<Link
+											to={withFragment($path("/"), "contact")}
+											className={cn(
+												"transition-colors",
+												isActiveFragment("contact")
+													? "text-primary font-medium"
+													: "text-muted-foreground hover:text-foreground",
+											)}
+										>
+											Contact
+										</Link>
+										<a
+											target="_blank"
+											rel="noopener noreferrer"
+											href="https://docs.ryot.io"
+											className="text-muted-foreground hover:text-foreground transition-colors"
+										>
+											Docs
+										</a>
+									</nav>
+
+									<HeaderActions />
+								</div>
+							</div>
+						</header>
+						<main className="flex-1">
+							<Outlet />
+							<ReactQueryDevtools buttonPosition="bottom-right" />
+						</main>
+						<footer className="border-t border-border/50 py-12 bg-muted/20">
+							<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+								<div className="flex flex-col md:flex-row justify-between items-center">
+									<div className="flex items-center space-x-3 mb-4 md:mb-0">
+										<img
+											src={logoUrl}
+											alt="Ryot Logo"
+											className="w-8 h-8 object-contain"
+										/>
+										<span className="text-xl font-semibold text-foreground">
+											Ryot
+										</span>
+									</div>
+									<div className="flex items-center space-x-6 text-muted-foreground">
+										<Link
+											to={$path("/features")}
+											className="hover:text-foreground transition-colors"
+										>
+											Features
+										</Link>
+										<Link
+											to={withFragment($path("/"), "contact")}
+											className="hover:text-foreground transition-colors"
+										>
+											Support
+										</Link>
+										<Link
+											to={$path("/terms")}
+											className="hover:text-foreground hidden sm:block transition-colors"
+										>
+											Terms
+										</Link>
+										<a
+											target="_blank"
+											rel="noopener noreferrer"
+											href="https://docs.ryot.io"
+											className="hover:text-foreground transition-colors"
+										>
+											Docs
+										</a>
+										<a
+											target="_blank"
+											rel="noopener noreferrer"
+											href="https://github.com/IgnisDa/ryot"
+											className="hover:text-foreground transition-colors"
+										>
+											GitHub
+										</a>
+									</div>
+								</div>
+								<div className="border-t border-border/50 mt-8 pt-8 text-center text-muted-foreground">
+									<p>
+										&copy; {new Date().getFullYear()} Ryot. All Rights Reserved.
+									</p>
+								</div>
+							</div>
+						</footer>
+					</div>
+					<ScrollRestoration />
+					<Scripts />
+				</body>
+			</QueryClientProvider>
+		</html>
+	);
+}
+
+export function ErrorBoundary() {
+	const error = useRouteError() as Error;
+	const message = isRouteErrorResponse(error)
+		? error.data.message
+		: error.message;
+
+	return (
+		<div>
+			<p>We encountered an error: {message}</p>
+		</div>
+	);
+}
